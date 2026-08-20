@@ -8,17 +8,19 @@ jobs:
       - name: Unzip project
         run: |
           unzip -o InstaX-main.zip
-          cp -r InstaX-main/..
-          rm -rf InstaX-main.zip
+          shopt -s dotglob
+          mv InstaX-main/*.
+          rm -rf InstaX-main InstaX-main.zip
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
       - name: Build APK
         run: |
           chmod +x gradlew
          ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: InstaX-APK
           path: app/build/outputs/apk/debug/*.apk
