@@ -5,22 +5,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unzip project
+      - name: Unzip
         run: |
-          unzip -o InstaX-main.zip
-          shopt -s dotglob
-          mv InstaX-main/*.
-          rm -rf InstaX-main InstaX-main.zip
+          unzip -q InstaX-main.zip
+          cp -a InstaX-main/..
+          rm -rf InstaX-main.zip
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
-      - name: Build APK
+      - name: Build
         run: |
           chmod +x gradlew
          ./gradlew assembleDebug
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: InstaX-APK
           path: app/build/outputs/apk/debug/*.apk
