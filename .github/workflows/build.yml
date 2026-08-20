@@ -1,24 +1,36 @@
 name: Build APK
-on: [push]
+
+on:
+  push:
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Unzip
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract InstaX project
         run: |
-          unzip -o InstaX-main.zip -d temp
-          cp -r temp/InstaX-main/*.
-          cp -r temp/InstaX-main/.*. 2>/dev/null || true
-          rm -rf temp InstaX-main.zip InstaX-main
-      - uses: actions/setup-java@v4
+          if [ -f "InstaX-main.zip" ]; then
+            unzip -o "InstaX-main.zip" -d temp
+            cp -r temp/InstaX-main/. .
+            rm -rf temp
+          fi
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
-      - name: Build APK
+          java-version: "17"
+
+      - name: Build Debug APK
         run: |
           chmod +x gradlew
-         ./gradlew assembleDebug
+          ./gradlew assembleDebug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
